@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./js/emmet.min.js"></script>
+    <style>
+      a[bold] {
+        font-weight: bold;
+      }
+
+      a[highlight] {
+        background-color: red;
+      }
+      td {
+        word-break: break-all;
+        overflow: auto;
+        /* width: 200px; */
+      }
+      td:first-of-type {
+        font-weight: bold;
+      }
+      td:nth-child(2) {
+        width: 400px;
+      }
+      td:nth-child(3) {
+        width: 400px;
+      }
+      td:nth-child(4) {
+        width: 400px;
+      }
+      #app {
+        position: relative;
+      }
+      .copy {
+        position: fixed;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+    <script src="https://unpkg.com/json5@^2.0.0/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="onConfirm" class="copy" v-if="startCompare">ok</button>
+      <label for="basic">
+        Basic to compare
+      </label>
+      <input
+        type="file"
+        placeholder="basic file"
+        @change="readFile($event, true)"
+        id="basic"
+      />
+      <label for="compare">the sample file (or empty)</label>
+      <input
+        type="file"
+        placeholder="compareFile"
+        @change="readFile($event, false)"
+        id="compare"
+      />
+      <button @click="startGenerate">compare</button>
+      <table border="1" v-if="startCompare">
+        <tr
+          v-for="(row, i) in line"
+          :key="i"
+          :style="{background: !checkLineOK(i) && 'red' }"
+        >
+          <td>{{ row.head }}</td>
+          <td>{{ row.line1 }}</td>
+          <td>
+            <textarea
+              name=""
+              v-model="row.input"
+              cols="30"
+              rows="10"
+            ></textarea>
+            <button @click.prevent="copy(i)" title="copy from basic">@</button>
+            <button @click.prevent="row.input=''" title="clear the input">
+              X
+            </button>
+          </td>
+          <td v-html="row.input"></td>
+        </tr>
+      </table>
+
+      <a
+        :href="downloadLink"
+        id="download"
+        :download="comparedLocale"
+        style="opacity: 0"
+      ></a>
+    </div>
+  </body>
+</html>
+<script src="js/main.js"></script>
